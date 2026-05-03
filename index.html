@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jixu Design | Workspace</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Emoji Picker -->
+    <script type="module" src="https://unpkg.com/emoji-picker-element@1"></script>
+</head>
+<body>
+    <div id="app">
+        <!-- Notification Sound -->
+        <audio id="msg-sound" src="https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3" preload="auto"></audio>
+
+        <!-- Toast System -->
+        <div id="toast" class="fixed top-6 left-1/2 -translate-x-1/2 bg-white text-black px-6 py-3 rounded shadow-2xl transition-all duration-300 opacity-0 pointer-events-none z-[100] flex items-center space-x-3 font-space text-sm tracking-wide font-medium border border-neutral-200">
+            <i class="fas fa-info-circle"></i>
+            <span id="toast-message">Notification</span>
+        </div>
+
+        <!-- 1. LANDING SCREEN -->
+        <div id="landing-screen" class="fixed inset-0 flex items-center justify-center p-4 z-10 transition-opacity duration-500">
+            <div class="glass-panel p-10 rounded-xl w-full max-w-md relative overflow-hidden">
+                <!-- Subtle gradient blob -->
+                <div class="absolute -top-20 -right-20 w-64 h-64 bg-white/5 blur-[100px] rounded-full pointer-events-none"></div>
+
+                <div class="text-center mb-10 relative z-10">
+                    <h1 class="text-4xl font-space font-bold tracking-tighter text-white uppercase">Jixu<span class="text-neutral-600">Design</span></h1>
+                    <p class="text-neutral-400 mt-2 text-sm">Minimalist Realtime Workspace</p>
+                </div>
+
+                <form id="join-form" class="space-y-5 relative z-10">
+                    <div>
+                        <label class="block text-xs font-space text-neutral-500 uppercase mb-2 tracking-widest">Display Name</label>
+                        <input type="text" id="nickname-input" required maxlength="15" placeholder="John Doe" class="w-full minimal-input rounded-lg p-3.5 text-[15px]">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-space text-neutral-500 uppercase mb-2 tracking-widest">Session ID</label>
+                        <input type="text" id="room-id-input" required placeholder="Enter shared code" class="w-full minimal-input rounded-lg p-3.5 text-center text-lg font-space tracking-[0.1em] uppercase">
+                    </div>
+                    
+                    <button type="submit" id="join-btn" class="w-full minimal-btn font-space uppercase tracking-widest py-4 rounded-lg mt-6 text-sm flex items-center justify-center space-x-2">
+                        <span>Enter Workspace</span>
+                        <i class="fas fa-arrow-right text-xs"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 2. CHAT SCREEN -->
+        <div id="chat-screen" class="hidden flex-col h-screen w-full max-w-4xl mx-auto border-x border-[#1a1a1a] bg-[#050505]/90 backdrop-blur-xl relative z-10 transition-opacity duration-500 opacity-0">
+            
+            <!-- Header -->
+            <div class="h-[72px] border-b border-[#1a1a1a] flex items-center justify-between px-6 shrink-0 z-20">
+                <div class="flex items-center space-x-4">
+                    <div class="flex flex-col">
+                        <div class="flex items-center space-x-3 group cursor-pointer" id="copy-room-btn" title="Click to copy Room ID">
+                            <span id="display-room-name" class="font-space font-bold text-lg text-white tracking-wide uppercase transition-colors group-hover:text-neutral-400">ROOM</span>
+                            <i class="fas fa-copy text-neutral-600 text-xs group-hover:text-white transition-colors opacity-0 group-hover:opacity-100"></i>
+                        </div>
+                        <span class="text-[10px] font-space text-neutral-500 tracking-widest uppercase mt-0.5 flex items-center">
+                            <span class="w-1.5 h-1.5 rounded-full bg-green-500 mr-2"></span> 
+                            Secure Connection Active
+                        </span>
+                    </div>
+                </div>
+                <button id="leave-btn" class="text-neutral-500 hover:text-white transition-colors flex items-center space-x-2 text-xs font-space uppercase px-4 py-2 rounded-lg hover:bg-white/5">
+                    <span>Leave</span>
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+
+            <!-- Messages Area -->
+            <div id="messages-container" class="flex-1 overflow-y-auto p-4 md:p-8 space-y-5 relative scroll-smooth">
+                <div class="text-center text-neutral-600 text-xs py-8 font-space tracking-widest uppercase">
+                    End of History
+                </div>
+            </div>
+
+            <!-- Typing Indicator Area -->
+            <div id="typing-indicator" class="h-6 px-8 text-[11px] font-space tracking-widest text-neutral-500 bg-gradient-to-t from-[#050505] to-transparent flex items-center opacity-0 transition-opacity uppercase absolute bottom-[85px] w-full z-10 pointer-events-none">
+                <span id="typing-text">Someone is typing...</span>
+            </div>
+
+            <!-- Image Preview Overlay -->
+            <div id="image-preview-container" class="hidden absolute bottom-[90px] left-4 right-4 bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl p-3 z-40 flex items-center justify-between shadow-2xl">
+                <div class="flex items-center space-x-4">
+                    <img id="image-preview-img" src="" class="h-12 w-12 object-cover rounded bg-[#1a1a1a]">
+                    <span class="text-sm text-neutral-400">Attached image</span>
+                </div>
+                <button id="cancel-image-btn" class="text-neutral-500 hover:text-white p-2 transition-colors"><i class="fas fa-times"></i></button>
+            </div>
+
+            <!-- Emoji Picker -->
+            <div id="emoji-picker-container" class="hidden absolute bottom-24 left-6 z-50">
+                <emoji-picker class="dark"></emoji-picker>
+            </div>
+
+            <!-- Input Area -->
+            <div class="p-4 shrink-0 border-t border-[#1a1a1a] bg-[#050505] relative z-30">
+                <form id="chat-form" class="relative flex items-center space-x-3 max-w-3xl mx-auto">
+                    <button type="button" id="emoji-btn" class="p-2 text-neutral-500 hover:text-white transition-colors rounded hover:bg-white/5">
+                        <i class="far fa-smile text-lg"></i>
+                    </button>
+                    
+                    <label class="p-2 text-neutral-500 hover:text-white transition-colors rounded hover:bg-white/5 cursor-pointer">
+                        <i class="fas fa-paperclip text-lg"></i>
+                        <input type="file" id="image-upload" accept="image/png, image/jpeg, image/gif" class="hidden">
+                    </label>
+
+                    <input type="text" id="message-input" autocomplete="off" placeholder="Type a message..." class="flex-1 minimal-input rounded-lg px-4 py-3 focus:outline-none text-[15px]">
+                    
+                    <button type="submit" id="send-btn" class="ml-2 w-11 h-11 rounded-lg minimal-btn flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="fas fa-arrow-up"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg-dark: #050505;
+  --color-border: #1a1a1a;
+  --color-accent: #ffffff;
+  --font-inter: "Inter", sans-serif;
+  --font-space: "Space Grotesk", sans-serif;
+}
+
+@layer base {
+  :root {
+    --bg-dark: #050505;
+    --border-color: #1a1a1a;
+    --accent: #ffffff;
+  }
+
+  body {
+    @apply font-inter bg-bg-dark text-[#ececec] antialiased overflow-hidden selection:bg-white selection:text-black;
+    background-image: linear-gradient(var(--border-color) 1px, transparent 1px), 
+                      linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
+    background-size: 40px 40px;
+    background-position: center center;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply bg-[rgba(5,5,5,0.7)] backdrop-blur-xl border border-border shadow-[0_20px_40px_rgba(0,0,0,0.8)];
+  }
+
+  .minimal-input {
+    @apply bg-[#0a0a0a] border border-border text-white transition-all duration-300;
+  }
+
+  .minimal-input:focus {
+    @apply border-accent ring-1 ring-accent outline-none shadow-[0_0_0_1px_var(--accent)];
+  }
+
+  .minimal-btn {
+    @apply bg-accent text-black border border-accent font-semibold transition-all duration-300;
+  }
+
+  .minimal-btn:hover {
+    @apply bg-transparent text-accent;
+  }
+
+  /* Custom Emoji Picker styling */
+  emoji-picker {
+    --background: #0a0a0a;
+    --border-color: var(--border-color);
+    --indicator-color: var(--accent);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.9);
+  }
+}
+
+@layer utilities {
+  .msg-enter {
+    animation: fadeUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  @keyframes fadeUp {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 2px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #666;
+  }
+}
